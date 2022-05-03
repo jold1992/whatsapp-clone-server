@@ -6,24 +6,47 @@
   "private": true,
   "scripts": {
     "start": "ts-node index.ts",
-    "format": "prettier \"**/*.ts\" --write"
+    "format": "prettier \"**/*.ts\" --write",
+    "test": "jest"
+  },
+  "jest-junit": {
+    "outputDirectory": "./test-results"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/graphql": "^14.5.0",
+    "@types/jest": "^27.4.1",
     "@types/node": "^17.0.30",
+    "apollo-server-testing": "^2.25.3",
+    "jest": "^27.1.0",
     "prettier": "^2.6.2",
+    "ts-jest": "^27.1.4",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4"
   },
   "dependencies": {
+    "@graphql-tools/schema": "^8.3.10",
     "apollo-server-express": "^3.6.7",
     "cors": "^2.8.5",
     "express": "^4.18.0",
     "graphql": "^16.4.0",
     "graphql-import": "^1.0.2",
-    "graphql-scalars": "^1.17.0",
-    "graphql-tools": "^8.2.8"
-  }
+    "graphql-scalars": "^1.17.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/ts-jest"
+    }
+  },
+  "globals": {
+    "ts-jest": {
+      "diagnostics": false
+    }
+  },
+  "globalSetup": "<rootDir>/tests/global-setup.ts",
+  "reporters": [
+    "default",
+    "jest-junit"
+  ]
 }
