@@ -1,24 +1,53 @@
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
+import http from 'http';
 import cors from 'cors';
 import schema from './schema';
+import { PubSub } from 'graphql-subscriptions';
 
-const app = express();
+(async () => {
 
-app.use(cors());
-app.use(express.json());
+    const app = express();
 
-app.get('/_ping', (req, res) => {
-    res.send('pong');
-});
+    app.use(cors());
+    app.use(express.json());
 
+    app.get('/_ping', (req, res) => {
+        res.send('pong');
+    });
 
-const server = new ApolloServer({ schema });
+    const pubsub = new PubSub();
+    const server = new ApolloServer({
+        schema,
+        context: () => ({ pubsub }),
+    });
 
-server.start().then(res => {
+    await server.start();
+    const httpServer = http.createServer(app);
+
     const port = process.env.PORT || 4000;
+
     server.applyMiddleware({ app });
-    app.listen(port, () =>
+
+    httpServer.listen(port, () => {
         console.log('🚀 Now browse to http://localhost:4000' + server.graphqlPath + ' 🚀')
-    )
-});
+    });
+
+
+
+})();
+// server.start().then(res => {
+//     const port = process.env.PORT || 4000;
+//     server.applyMiddleware({ app });
+//     // app.listen(port, () =>
+//     //     console.log('🚀 Now browse to http://localhost:4000' + server.graphqlPath + ' 🚀')
+//     // )
+
+//     const httpServer = http.createServer(app);
+//     server.installSubscriptionHandlers(httpServer);
+
+//     httpServer.listen(port, () => {
+//         console.log(`Server is listening on port ${port}`);
+//     });
+
+// });
